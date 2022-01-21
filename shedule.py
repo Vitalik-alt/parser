@@ -65,19 +65,51 @@ shedule = soup.find_all('div', {'class':['col-md-6']})
 
 #print(shedule)
 
-#date = re.findall("\d{2}.\d{2}.\d{4}", shedule)
-#print(date)
-
 #print(soup.div.h4.text)
 #print(soup.div.tbody.get_text(separator = " ").strip())
+date = number = time_start = time_end = name = ""
 for data in shedule:
 #	print(soup.div.table.get_text(separator = " ").strip())
 #	print(data.text, sep = ' ', end = '\n\n\n\n\n')
-	print(data.get_text(separator = " ").strip(), sep = ' ', end = '\n\n\n\n\n')
+#	line = print(data.get_text(separator = " ").strip(), sep = ' ', end = '\n\n\n\n\n')
+	line = data.get_text(separator = " ").strip()
+	lesson = re.split("(\d \d{2}:\d{2} \d{2}:\d{2})", str(line))
+	for i, el in enumerate(lesson):
+#		print(el)
+		if i == 0:
+			date = re.findall("\d{2}.\d{2}.\d{4}", el)
+#			print(date)
+#			if date == []: continue
+		
+		if i % 2 == 1:
+			number = re.findall("\d ", el)[0]
+#			print(number)
 
-#html = BeautifulSoup(page.text, "html.parser")
-#print(html.title)
-#print(html.title.text)
+			time_start = re.findall("\d{2}:\d{2}|$", el)[0]
+#			print(time_start)
+			
+			time_end = re.findall("\d{2}:\d{2}", el)[1]
+#			print(time_end)
+		if i % 2 == 0:
+			name = el
+#			print(name)
+		data = (str(date), number, str(time_start), str(time_end), str(name))
+		print(data)
+
+
+
+'''
+	tmp = data.get_text(separator = " ").strip()
+	date = re.findall("\d{2}.\d{2}.\d{4}", tmp)
+	print(date)
+	
+	lesson = re.findall("\d \d{2}:\d{2}", tmp)
+	print(lesson)
+
+	print("\n\n\n\n\n")
+'''
+
+#	link = re.findall("\d{2}.\d{2}.\d{4}", shedule)
 
 '''
 allNews = soup.findAll('a', class_='lenta')
@@ -85,3 +117,7 @@ for data in allNews:
     if data.find('span', class_='time2 time3') is not None:
         filteredNews.append(data.text)
 '''
+
+#html = BeautifulSoup(page.text, "html.parser")
+#print(html.title)
+#print(html.title.text)
