@@ -3,7 +3,11 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 
 from bs4 import BeautifulSoup
-import requests
+
+import re
+import os
+
+os.system("cls")
 
 '''
 self.assertIn("Python", driver.title)
@@ -12,7 +16,7 @@ elem.send_keys("pycon")
 assert "No results found." not in driver.page_source
 '''
 
-def slow_type(element, text, delay=0.1):
+def slow_type(element, text, delay = 0.1):
     for character in text:
         element.send_keys(character)
         time.sleep(delay)
@@ -53,3 +57,31 @@ field_to.submit()
 send = page.find_element_by_tag_name('button')
 send.click()
 
+######################################################################
+source_data = page.page_source
+soup = BeautifulSoup(source_data, "html.parser")
+#print(soup)
+shedule = soup.find_all('div', {'class':['col-md-6']})
+
+#print(shedule)
+
+#date = re.findall("\d{2}.\d{2}.\d{4}", shedule)
+#print(date)
+
+#print(soup.div.h4.text)
+#print(soup.div.tbody.get_text(separator = " ").strip())
+for data in shedule:
+#	print(soup.div.table.get_text(separator = " ").strip())
+#	print(data.text, sep = ' ', end = '\n\n\n\n\n')
+	print(data.get_text(separator = " ").strip(), sep = ' ', end = '\n\n\n\n\n')
+
+#html = BeautifulSoup(page.text, "html.parser")
+#print(html.title)
+#print(html.title.text)
+
+'''
+allNews = soup.findAll('a', class_='lenta')
+for data in allNews:
+    if data.find('span', class_='time2 time3') is not None:
+        filteredNews.append(data.text)
+'''
