@@ -1,13 +1,17 @@
-import time
+import psycopg2, time, re, os
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 
 from bs4 import BeautifulSoup
 
-import re
-import os
-
 os.system("cls")
+
+conn = psycopg2.connect(
+	host="localhost",
+	database="testdb",
+	user="postgres",
+	password="qwerty"
+)
 
 '''
 self.assertIn("Python", driver.title)
@@ -67,6 +71,11 @@ shedule = soup.find_all('div', {'class':['col-md-6']})
 
 #print(soup.div.h4.text)
 #print(soup.div.tbody.get_text(separator = " ").strip())
+
+# create a cursor
+cur = conn.cursor()
+sql = """INSERT INTO shedule (date, number, time_start, time_end, name) VALUES (%s, %s, %s, %s, %s)"""
+
 date = number = time_start = time_end = name = ""
 for data in shedule:
 #	print(soup.div.table.get_text(separator = " ").strip())
@@ -78,10 +87,14 @@ for data in shedule:
 #		print(el)
 		if i == 0:
 			date = re.findall("\d{2}.\d{2}.\d{4}", el)
+#			print(el)
 #			print(date)
-#			if date == []: continue
-		
+			if date == []: continue
+#			data = (str(date), number, str(time_start), str(time_end), str(name))
+#			print(data)
+
 		if i % 2 == 1:
+#			print(el)
 			number = re.findall("\d ", el)[0]
 #			print(number)
 
@@ -90,12 +103,19 @@ for data in shedule:
 			
 			time_end = re.findall("\d{2}:\d{2}", el)[1]
 #			print(time_end)
-		if i % 2 == 0:
+			
+		if i % 2 == 0 and i != 0:
+#			print(el)
 			name = el
 #			print(name)
-		data = (str(date), number, str(time_start), str(time_end), str(name))
-		print(data)
+			if name == "\n": name = '   '
+			data = (str(date), number, str(time_start), str(time_end), str(name))
+#			print(data)
+			cur.execute(sql, data)
+			conn.commit()
 
+cur.close()
+conn.close()
 
 
 '''
